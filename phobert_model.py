@@ -1,19 +1,22 @@
 import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import RobertaForSequenceClassification, AutoTokenizer
 from typing import List, Tuple
 import streamlit as st
 
+
+MODEL_REPO = "Steven2002/Finetune-PhoBERT-15KComment"
+
+
 @st.cache_resource
 def load_model():
-    """Load the PhoBERT model and tokenizer from local folder"""
+    """Load PhoBERT model and tokenizer from Hugging Face Hub"""
     try:
-        model_path = "phobert_sentiment_model/"
-        tokenizer = AutoTokenizer.from_pretrained(model_path)
-        model = AutoModelForSequenceClassification.from_pretrained(model_path)
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_REPO)
+        model = RobertaForSequenceClassification.from_pretrained(MODEL_REPO)
         return tokenizer, model
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
-        st.info("Please ensure the model folder 'phobert_sentiment_model/' exists and contains the model files.")
+        st.info(f"Please check if the model '{MODEL_REPO}' exists and is accessible.")
         return None, None
 
 def predict_sentiment(text: str, tokenizer, model) -> Tuple[str, float]:
